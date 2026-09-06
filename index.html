@@ -252,6 +252,7 @@
   }
   .project-media iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; }
   .soon-tag{ font-family: var(--mono); font-size: 0.72rem; color: var(--muted); }
+  .project-role{ font-family: var(--mono); font-size: 0.75rem; color: var(--muted); margin-bottom: 0.5rem; }
 
   /* ---------- CONTACTO ---------- */
   #contacto .lead{
@@ -409,6 +410,7 @@
       year: "2024",
       title: "Sombras de Invierno",
       type: "guion de largometraje",
+      rol: "Dirección",
       logline: "Guion sin producir. Disponible bajo solicitud.",
       videoId: "",
       source: "youtube"
@@ -417,6 +419,7 @@
       year: "2023",
       title: "La Espera",
       type: "cortometraje",
+      rol: "Dirección",
       logline: "Una sala de espera se convierte en el único lugar donde dos desconocidos pueden ser honestos.",
       videoId: "",
       source: "youtube"
@@ -458,7 +461,10 @@
       </button>
       <div class="project-detail">
         <div class="project-detail-inner">
-          <p>${p.logline}</p>
+          <div>
+            <p class="project-role">${p.role}</p>
+            <p>${p.logline}</p>
+          </div>
           <div class="project-media">
             ${hasVideo ? "" : '<span class="soon-tag">Video pendiente de publicación</span>'}
           </div>
