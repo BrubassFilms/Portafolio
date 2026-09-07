@@ -211,7 +211,7 @@
   .facts .row span:last-child{ color: var(--fg); }
 
   /* ---------- PROYECTOS ---------- */
-  .filmography{ border-top: 1px solid var(--line); }
+  .aphy{ border-top: 1px solid var(--line); }
   .project{
     border-bottom: 1px solid var(--line);
   }
@@ -278,6 +278,19 @@
     display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem;
     font-family: var(--mono); font-size: 0.72rem; color: var(--muted);
   }
+.filters{
+    display:flex; flex-wrap:wrap; gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    font-family: var(--mono); font-size: 0.8rem;
+  }
+  .filter-btn{
+    background:none; border:0; padding:0 0 0.3rem 0; cursor:pointer;
+    color: var(--muted); font: inherit;
+    border-bottom: 1px solid transparent;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+  .filter-btn:hover, .filter-btn:focus-visible{ color: var(--fg); }
+  .filter-btn.active{ color: var(--fg); border-bottom-color: var(--accent); }
 </style>
 </head>
 <body>
@@ -346,6 +359,7 @@
       <span class="block-num">02</span>
       <h2 class="block-title">Proyectos</h2>
     </div>
+    <div class="filters" id="filters"><!-- generado por JS --></div>
     <div class="filmography" id="filmography"><!-- generado por JS --></div>
   </section>
 
