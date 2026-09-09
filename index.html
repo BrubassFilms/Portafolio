@@ -211,7 +211,7 @@
   .facts .row span:last-child{ color: var(--fg); }
 
   /* ---------- PROYECTOS ---------- */
-  .aphy{ border-top: 1px solid var(--line); }
+  .filmography{ border-top: 1px solid var(--line); }
   .project{
     border-bottom: 1px solid var(--line);
   }
@@ -377,7 +377,6 @@
       <a href="https://www.instagram.com/brubass_/" target="_blank" rel="noopener">Instagram</a>
       <a href="https://vimeo.com/brubass" target="_blank" rel="noopener">Vimeo</a>
       <a href="https://www.tiktok.com/@brubass_films00" target="_blank" rel="noopener">TikTok</a>
-</div>
     </div>
   </section>
 
@@ -407,6 +406,7 @@
       year: "2025",
       title: "Feliz, Feliz",
       type: "cortometraje",
+      destacado: true,
       role: "Guión y Dirección",
       logline: "Una joven enfrenta sus peores pesadillas cuando sus amigas le preparan una fiesta sorpresa para su cumpleaños. Luz, cae en una espiral de ansiedad y paranoia que desdibuja su realidad",
       videoId: "OccCd8r1JWE",
@@ -416,6 +416,7 @@
       year: "2025",
       title: "No es sano",
       type: "videoclip",
+      destacado: true,
       role: "Dirección",
       logline: "SBA - NO ES SANO",
       videoId: "S9zQWueMfHs",
@@ -425,6 +426,7 @@
       year: "2026",
       title: "Donde tu me digas",
       type: "videoclip",
+      destacado: true,
       role: "Dirección",
       logline: "Sba x Frozt y Raidi - DONDE TÚ ME DIGAS",
       videoId: "IbwmPuBHeCg",
@@ -434,10 +436,21 @@
       year: "2026",
       title: "Fantasti-k",
       type: "videoclip",
+      destacado: true,
       role: "Dirección",
       logline: "Sba x Lowky luk - FANTASTI-K (Prod. Thaxu)",
       videoId: "w7lkO6PB_YU",
       source: "youtube"
+    },
+    {
+      year: "2026",
+      title: "BLINBLIN",
+      type: "publicidad",
+      destacado: true,
+      role: "Sonido Directo",
+      logline: "Fashion film de Pinturas KRACK y DEPURA ft Marlon Breeze, donde Marlon presenta productos de Pinturas KRACK en una pequeña capsula de ficción",
+      videoId: "DcmaWAvRHsd",
+      source: "instagram"
     },
     {
       year: "2026",
@@ -570,6 +583,7 @@
     function embedUrl(id, source){
       if(source === "vimeo") return `https://player.vimeo.com/video/${id}?autoplay=1`;
       if(source === "tiktok") return `https://www.tiktok.com/player/v1/${id}?autoplay=1`;
+      if(source === "instagram") return `https://www.instagram.com/p/${id}/embed`;
       return `https://www.youtube.com/embed/${id}?autoplay=1&rel=0`;
   }
 
