@@ -291,6 +291,29 @@
   }
   .filter-btn:hover, .filter-btn:focus-visible{ color: var(--fg); }
   .filter-btn.active{ color: var(--fg); border-bottom-color: var(--accent); }
+  .destacados{
+    display:grid; grid-template-columns: repeat(2, 1fr); gap: clamp(1.5rem, 3vw, 2.5rem);
+    margin-bottom: clamp(3rem, 6vw, 5rem);
+  }
+  @media (max-width: 760px){ .destacados{ grid-template-columns: 1fr; } }
+  .featured-media{
+    aspect-ratio: 16/9; border: 1px solid var(--line); background: var(--bg-raised);
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+    position: relative; overflow:hidden;
+  }
+  .featured-media iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; }
+  .featured-media:hover .play-icon{ border-color: var(--fg); background: var(--accent); }
+  .featured-meta{ margin-top: 0.9rem; }
+  .featured-meta .year{ font-family: var(--mono); font-size: 0.78rem; color: var(--muted); }
+  .featured-meta .title{ font-family: var(--serif); font-size: clamp(1.2rem, 2.2vw, 1.5rem); margin-top: 0.2rem; }
+  .featured-meta .role{ font-family: var(--mono); font-size: 0.75rem; color: var(--muted); margin-top: 0.3rem; }
+  .featured-meta .logline{ font-size: 0.92rem; color: #cfc9bc; margin-top: 0.4rem; max-width: 46ch; }
+  .category-heading{
+    font-family: var(--mono); font-size: 0.8rem; color: var(--muted);
+    margin: clamp(2rem, 4vw, 3rem) 0 0.75rem 0;
+    padding-top: 1.5rem; border-top: 1px solid var(--line);
+  }
+  .category-heading:first-of-type{ border-top: 0; padding-top: 0; }
 </style>
 </head>
 <body>
@@ -359,6 +382,7 @@
       <span class="block-num">02</span>
       <h2 class="block-title">Proyectos</h2>
     </div>
+    <div class="destacados" id="destacados"><!-- generado por JS --></div>
     <div class="filters" id="filters"><!-- generado por JS --></div>
     <div class="filmography" id="filmography"><!-- generado por JS --></div>
   </section>
@@ -600,45 +624,125 @@
   reelFrame.addEventListener("click", playReel);
   reelFrame.addEventListener("keypress", (e) => { if(e.key === "Enter" || e.key === " ") playReel(); });
 
-  // ---- Filmografía ----
+  // ---- Categorías, destacados y filtros ----
+  const CATEGORIAS = {
+    "cortometraje": "Cine",
+    "videoclip": "Videoclips",
+    "redes sociales": "Redes Sociales",
+    "publicidad": "Publicidad"
+  };
+
   const filmography = document.getElementById("filmography");
-  PROYECTOS.forEach((p, i) => {
-    const article = document.createElement("article");
-    article.className = "project";
+  const destacadosEl = document.getElementById("destacados");
+  const filtersEl = document.getElementById("filters");
 
+  const destacados = PROYECTOS.filter(p => p.destacado);
+  const resto = PROYECTOS.filter(p => !p.destacado);
+
+  const CATS_PRESENTES = ["Todos", ...new Set(resto.map(p => CATEGORIAS[p.type] || p.type))];
+  let currentFilter = "Todos";
+
+  function crearMedia(p, mediaEl){
     const hasVideo = Boolean(p.videoId);
-    article.innerHTML = `
-      <button class="project-row" aria-expanded="false">
-        <span class="year">${p.year}</span>
-        <span class="title">${p.title}</span>
-        <span class="type">${p.type}</span>
-        <span class="status ${hasVideo ? "ready" : ""}">${hasVideo ? "ver" : "próximamente"}</span>
-      </button>
-      <div class="project-detail">
-        <div class="project-detail-inner">
-          <div>
-            <p class="project-role">${p.role}</p>
-            <p>${p.logline}</p>
-          </div>
-          <div class="project-media">
-            ${hasVideo ? "" : '<span class="soon-tag">Video pendiente de publicación</span>'}
-          </div>
+    mediaEl.innerHTML = hasVideo
+      ? `<div class="play-btn"><span class="play-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l14 8-14 8V4z"/></svg></span></div>`
+      : '<span class="soon-tag">Video pendiente de publicación</span>';
+    if(hasVideo){
+      mediaEl.addEventListener("click", () => {
+        if(!mediaEl.querySelector("iframe")){
+          mediaEl.innerHTML = `<iframe src="${embedUrl(p.videoId, p.source)}" title="${p.title}" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+        }
+      });
+    }
+  }
+
+  function renderDestacados(){
+    destacadosEl.innerHTML = "";
+    destacados.forEach(p => {
+      const card = document.createElement("article");
+      card.className = "featured-card";
+      card.innerHTML = `
+        <div class="featured-media"></div>
+        <div class="featured-meta">
+          <div class="year">${p.year} · ${p.type}</div>
+          <div class="title">${p.title}</div>
+          <div class="role">${p.role}</div>
+          <div class="logline">${p.logline}</div>
         </div>
-      </div>
-    `;
-
-    const row = article.querySelector(".project-row");
-    const media = article.querySelector(".project-media");
-    row.addEventListener("click", () => {
-      const isOpen = article.classList.toggle("open");
-      row.setAttribute("aria-expanded", String(isOpen));
-      if(isOpen && hasVideo && !media.querySelector("iframe")){
-        media.innerHTML = `<iframe src="${embedUrl(p.videoId, p.source)}" title="${p.title}" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
-      }
+      `;
+      crearMedia(p, card.querySelector(".featured-media"));
+      destacadosEl.appendChild(card);
     });
+  }
 
-    filmography.appendChild(article);
-  });
+  function renderFilters(){
+    filtersEl.innerHTML = CATS_PRESENTES.map(c =>
+      `<button class="filter-btn ${c === currentFilter ? "active" : ""}" data-cat="${c}">${c}</button>`
+    ).join("");
+    filtersEl.querySelectorAll(".filter-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        currentFilter = btn.dataset.cat;
+        renderFilters();
+        renderFilmography();
+      });
+    });
+  }
+
+  function renderFilmography(){
+    filmography.innerHTML = "";
+    const categoriasAMostrar = currentFilter === "Todos"
+      ? CATS_PRESENTES.filter(c => c !== "Todos")
+      : [currentFilter];
+
+    categoriasAMostrar.forEach(cat => {
+      const items = resto.filter(p => (CATEGORIAS[p.type] || p.type) === cat);
+      if(!items.length) return;
+
+      const heading = document.createElement("h3");
+      heading.className = "category-heading";
+      heading.textContent = cat;
+      filmography.appendChild(heading);
+
+      items.forEach(p => {
+        const article = document.createElement("article");
+        article.className = "project";
+        const hasVideo = Boolean(p.videoId);
+        article.innerHTML = `
+          <button class="project-row" aria-expanded="false">
+            <span class="year">${p.year}</span>
+            <span class="title">${p.title}</span>
+            <span class="type">${p.type}</span>
+            <span class="status ${hasVideo ? "ready" : ""}">${hasVideo ? "ver" : "próximamente"}</span>
+          </button>
+          <div class="project-detail">
+            <div class="project-detail-inner">
+              <div>
+                <p class="project-role">${p.role}</p>
+                <p>${p.logline}</p>
+              </div>
+              <div class="project-media">
+                ${hasVideo ? "" : '<span class="soon-tag">Video pendiente de publicación</span>'}
+              </div>
+            </div>
+          </div>
+        `;
+        const row = article.querySelector(".project-row");
+        const media = article.querySelector(".project-media");
+        row.addEventListener("click", () => {
+          const isOpen = article.classList.toggle("open");
+          row.setAttribute("aria-expanded", String(isOpen));
+          if(isOpen && hasVideo && !media.querySelector("iframe")){
+            media.innerHTML = `<iframe src="${embedUrl(p.videoId, p.source)}" title="${p.title}" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+          }
+        });
+        filmography.appendChild(article);
+      });
+    });
+  }
+
+  renderDestacados();
+  renderFilters();
+  renderFilmography();
 
   // ---- Timecode ligado al scroll (referencia: página = "bobina" de 10 min a 24fps) ----
   const timecodeEl = document.getElementById("timecode");
