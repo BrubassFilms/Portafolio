@@ -607,7 +607,7 @@
     function embedUrl(id, source){
       if(source === "vimeo") return `https://player.vimeo.com/video/${id}?autoplay=1`;
       if(source === "tiktok") return `https://www.tiktok.com/player/v1/${id}?autoplay=1`;
-      if(source === "instagram") return `https://www.instagram.com/p/${id}/embed`;
+      if(source === "instagram") return `https://www.instagram.com/reel/${id}/embed`;
       return `https://www.youtube.com/embed/${id}?autoplay=1&rel=0`;
   }
 
